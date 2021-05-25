@@ -22,6 +22,7 @@ namespace Na_perezdachu_1._1
         int[] Array = new int[5];
         int score;
         int level;
+        
         //PictureBox[] aBox;
 
         WindowsMediaPlayer Magic;
@@ -43,25 +44,21 @@ namespace Na_perezdachu_1._1
             powerr = new PictureBox[1];
             playerSpeed = 5;
             powerSpeed = 50;
-            this.BackgroundImage = Properties.Resources.class_2;
+            this.BackgroundImage = Properties.Resources.class_4;
 
             //добавляются звуки
             Magic = new WindowsMediaPlayer();
             Magic.URL = "D:\\Na_perezdachu_1.1\\Resources\\sounds\\power.mp3";
             Magic.settings.volume = 20;
 
-            Target = new WindowsMediaPlayer();
-            Target.URL = "D:\\Na_perezdachu_1.1\\Resources\\sounds\\popadanie.mp3";
-            Target.settings.volume = 15;
+            
 
             GameSong = new WindowsMediaPlayer();
             GameSong.URL = "D:\\Na_perezdachu_1.1\\Resources\\sounds\\sound.mp3";
             GameSong.settings.setMode("loop", true);
             GameSong.settings.volume = 30;
 
-            Rip = new WindowsMediaPlayer();
-            Rip.URL = "D:\\Na_perezdachu_1.1\\Resources\\sounds\\loss.mp3";
-            Rip.settings.volume = 20;
+           
 
             
 
@@ -74,6 +71,7 @@ namespace Na_perezdachu_1._1
                 powerr[i].Size = new Size(30, 20);
                 powerr[i].SizeMode = PictureBoxSizeMode.StretchImage;
                 powerr[i].BackColor = Color.Transparent;
+                powerr[i].Visible = false;
                 this.Controls.Add(powerr[i]);
             }
 
@@ -87,21 +85,22 @@ namespace Na_perezdachu_1._1
                 int sizeEnemy = rnd.Next(50, 60);
 
                 enemies[i] = new PictureBox();
-                int b = rnd.Next(1, 3);
+                
                 
                 enemies[i].Size = new Size(sizeEnemy, sizeEnemy);
                 enemies[i].SizeMode = PictureBoxSizeMode.Zoom;
                 enemies[i].BackColor = Color.Transparent;
                 EnemiesImage(i);
+                int b = rnd.Next(1, 3);
                 if (b == 1)
                 {
                     Array[i] = 2;
-                    enemies[i].Location = new Point(1000 + rnd.Next(0, 70), rnd.Next(0, 200) + 150);
+                    enemies[i].Location = new Point(1000 + rnd.Next(0, 70), rnd.Next(0, 170) + 200);//rnd.Next(0,
                 }
                 if (b == 2)
                 {
                     Array[i] = 1;
-                    enemies[i].Location = new Point(rnd.Next(-70, 0), rnd.Next(0, 200) + 150);
+                    enemies[i].Location = new Point(rnd.Next(-70, 0), rnd.Next(0, 170) + 200); ;
                 }
                 this.Controls.Add(enemies[i]);
 
@@ -111,32 +110,33 @@ namespace Na_perezdachu_1._1
         }
 
         //рандовное присвоение переменной врагов(сфер) картинки при определенном уровне
+        //score == 30 || score == 70 || score == 95
         private void EnemiesImage(int i)
         {
             int a = rnd.Next(1, 4);
             if (a == 1)
             {
-                if (level == 1)
+                if (score<=27)
                     enemies[i].Image = Properties.Resources.pro_1;
-                else if (level == 2)
+                else if (score > 27 && 68 > score)
                     enemies[i].Image = Properties.Resources.eng_1;
                 else
                     enemies[i].Image = Properties.Resources.math_1;
             }
             if (a == 2)
             {
-                if (level == 1)
+                if (score <= 27)
                     enemies[i].Image = Properties.Resources.pro_21;
-                else if (level == 2)
+                else if (score > 27 && 68 > score)
                     enemies[i].Image = Properties.Resources.eng_2;
                 else
                     enemies[i].Image = Properties.Resources.math_2;
             }
             if (a == 3)
             {
-                if (level == 1)
+                if (score <= 27)
                     enemies[i].Image = Properties.Resources.pro_3;
-                else if (level == 2)
+                else if (score>27&& 68 > score)
                     enemies[i].Image = Properties.Resources.eng_3;
                 else
                     enemies[i].Image = Properties.Resources.math_3;
@@ -164,7 +164,7 @@ namespace Na_perezdachu_1._1
         {
             //267 374
 
-            if (playerBox.Top > 105)
+            if (playerBox.Top > 125)
             {
                 playerBox.Top -= playerSpeed;
             }
@@ -221,7 +221,7 @@ namespace Na_perezdachu_1._1
 
                 for (int i = 0; i < powerr.Length; i++)
                 {
-
+                    powerr[i].Visible = true;
                     Intersect();
                     //if (powerr[i].Left >1100||powerr[i].Left<0)
                     Magic.controls.play();
@@ -229,6 +229,7 @@ namespace Na_perezdachu_1._1
                     {
                         playerBox.Image = Properties.Resources.player_p;
                         powerr[i].Location = new Point(playerBox.Location.X + 50 + i * 50, playerBox.Location.Y + 80);
+                       // if(powerr[i].Left)
                     }
                     else if (playerBox.Left < 421)
                     {
@@ -274,21 +275,24 @@ namespace Na_perezdachu_1._1
         {
             Enemies(enemies, enemiesSpeed);
         }
+        //движение сфер
         private void Enemies(PictureBox[] enemies, int speed)
         {
             for (int i = 0; i < enemies.Length; i++)
             {
+                
                 if (Array[i] == 2)
                 {
                     enemies[i].Left -= speed + (int)(Math.Sin(enemies[i].Left * Math.PI / 180) + Math.Cos(enemies[i].Left * Math.PI / 180));
                     Intersect();
 
-                    if (enemies[i].Left < this.Left)
+                    if (enemies[i].Left < 0)
                     {
+                        EnemiesImage( i);
                         int sizeEnemy = rnd.Next(50, 60);
                         enemies[i].Size = new Size(sizeEnemy, sizeEnemy);
                         Array[i] = 2;
-                        enemies[i].Location = new Point(1000 + rnd.Next(0, 70), rnd.Next(0, 200) + 150);
+                        enemies[i].Location = new Point(1000 + rnd.Next(0, 70), rnd.Next(0, 170) + 200); ;
                     }
 
                 }
@@ -298,10 +302,11 @@ namespace Na_perezdachu_1._1
                     Intersect();
                     if (enemies[i].Left > 1280)
                     {
+                        EnemiesImage(i); 
                         int sizeEnemy = rnd.Next(50, 60);
                         enemies[i].Size = new Size(sizeEnemy, sizeEnemy);
                         Array[i] = 1;
-                        enemies[i].Location = new Point(rnd.Next(-70, 0), rnd.Next(0, 200) + 150);
+                        enemies[i].Location = new Point(rnd.Next(-70, 0), rnd.Next(0, 170) + 200); ;
 
                     }
 
@@ -321,9 +326,22 @@ namespace Na_perezdachu_1._1
                 {
                     
                     score++;
+                    Target = new WindowsMediaPlayer();
+                    Target.URL = "D:\\Na_perezdachu_1.1\\Resources\\sounds\\popadanie.mp3";
+                    Target.settings.volume = 15;
                     Target.controls.play();
+                    int b = rnd.Next(1, 3);
+                    if (b == 1)
+                    {
+                        Array[i] = 2;
+                        enemies[i].Location = new Point(1000 + rnd.Next(0, 70), rnd.Next(0, 170) + 200);//rnd.Next(0,
+                    }
+                    if (b == 2)
+                    {
+                        Array[i] = 1;
+                        enemies[i].Location = new Point(rnd.Next(-70, 0), rnd.Next(0, 170) + 200); ;
+                    }
                     EnemiesImage(i);
-                    enemies[i].Location = new Point(1000 + rnd.Next(0, 70), rnd.Next(-10, 170) + 150);
                     powerr[0].Location = new Point(2000, playerBox.Location.Y + 50);
                     label4.Text = Convert.ToString(score);
                     Levle();
@@ -339,6 +357,9 @@ namespace Na_perezdachu_1._1
         private void GameOver()
         {
             //вывод 
+            Rip = new WindowsMediaPlayer();
+            Rip.URL = "D:\\Na_perezdachu_1.1\\Resources\\sounds\\loss.mp3";
+            Rip.settings.volume = 20;
             Rip.controls.play();
             playerBox.Visible = false;
             label1.Visible = true;
@@ -358,7 +379,7 @@ namespace Na_perezdachu_1._1
                 {
                     score += 10;
                     this.BackgroundImage = Properties.Resources.class_3;
-                    
+
                 }
                 else if (level == 2)
                 {
@@ -374,7 +395,7 @@ namespace Na_perezdachu_1._1
                 {
 
                     EnemiesTimer.Stop();
-                    
+
                     enemiesSpeed++;
                     level++;
                     schet.Text = Convert.ToString(level);
@@ -382,7 +403,8 @@ namespace Na_perezdachu_1._1
                 }
             }
         }
-        
+
+
         private void Finish()
         {
 
@@ -401,8 +423,8 @@ namespace Na_perezdachu_1._1
         }
         private void anewButton_Click(object sender, EventArgs e)
         {
-            Process.Start(Application.ExecutablePath);
-            Close();
+
+            Application.Restart();
         }
 
         private void exitButton_Click(object sender, EventArgs e)
@@ -411,4 +433,3 @@ namespace Na_perezdachu_1._1
         }
     }
 }
-
